@@ -1,0 +1,27 @@
+### create product req
+POST http://localhost:4000/product-api/products
+Content-Type: application/json
+
+{
+    "productName":"remote",
+    "price":1000,
+    "brand":"LG"
+}
+
+###create  user req
+POST http://localhost:4000/user-api/users
+Content-Type: application/json
+
+{
+    "name":"Anil",
+    "email":"anil@gmail.com",
+    "password":"Bhar",
+    "cart":[]
+}
+
+
+###
+PUT http://localhost:4000/user-api/user-cart/user-id/698072549934338146fee347/product-id/69806dceed89d02f471e176f
+
+### read user by id
+GET http://localhost:4000/user-api/users/6981a703e15ddd288510b5c3 
