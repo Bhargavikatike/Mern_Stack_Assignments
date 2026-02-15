@@ -1,20 +1,41 @@
-1.Generate package.json
-  npm init -y
+git add, git commit, git push 
+---------------------
+Schemas Uses: to perform Validations --> user are not serioud of enter data
+this was given by Mangoos
+regular exprns: rajags
+at the time of insertion that validation takes place 
+save() insertMany() insertOne() ----> validations are called automatically
+delete() update() --->not need to run the validators
+           |____> runValidators are used to validate again the updated data 
+provide defalut error handling middleware  are invoked by express when error occurs
 
-2.create server.js
-
-3. Install, Import express and create HTTP server, Assign port
-
-###Connect MongoDB database 
-   REST API   ---------->mongodb native driver---------->   MongoDB server 
-   REST API   ---------->mongodb ODM tool(mongoose)---------->   MongoDB server 
-
-4.
-a. Install Mongoose and connect to mongo server
-b. create Schema of the resource
-c. create model of the Schema
-d. perform DB oprns on that Model 
+Projections--> retriving the feilds that we want 
+fIND(cond)-->very first field 
+field level filtering ---> projections supplied by mongo db 
+find({cond}{proj'n})
+if we dont want obj id:    _i:0
 
 
-Error handling
-function errorHandl
+unique property---->appln takes care of the objId provided
+
+saving password: 
+1.encrptn-->reversable 
+2.hashing --> irriversable
+are the techniques used to secrurity
+***password has to hased before entering into db for the security purpose
+
+cost Factor is used to encode the data
+no of round more are the no of layers hashed the data 
+more rounds(costFactors) ---> more security 
+
+impossible to rever the hash but can verify the hashed data 
+
+1.hash the password
+2.replace the ps with hashed ps 
+
+lib's for hasing 
+bscriptjs 
+install: npm install bcryptn.js 
+
+
+diff between embedded document and reference document

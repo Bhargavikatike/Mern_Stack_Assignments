@@ -1,53 +1,111 @@
 import exp from 'express'
-import {UserModel} from '../Models/userModel.js'
-//USER API router
-export const userApp=exp.Router()
+import { userModel } from '../Models/userModel.js'
+import { ProductModel } from '../Models/productModel.js';
+export const userRouter=exp.Router()
 
-//read user
-userApp.get('/users',async(req,res)=>{
-    //read users from DB
-    let userObj=await UserModel.find()
-    //send res
-    res.status(200).json({message:"users",payload:userObj})
+//create user
+userRouter.post('/users',async(req,res)=>{ 
+    let userObj=req.body;
+    await new  userModel(userObj).validate()
+
+    //hashed password
+    //await is used to stop the empty passwords by user
+    let hashedPassword= await hash(newUser.password,12)
+    userObj.password=hashedPassword
+
+    let userDocument=new userModel(userObj)
+    await userDocument.save({validateBeforeSave:false})
+    res.status(201).json({message:"user Created",payload:userObj})
 })
 
-userApp.get('/users/:id',async(req,res)=>{
-    let objId=req.params.id
-    let userObj=await UserModel.findById(objId)
-    res.status(200).json({message:"user",payload: userObj})
+/*
+//add product in user's cart
+userRouter.put('/user-cart/user-id/:uid/product-id/:pid',async(req,res)=>{ 
+    //readuser and prod id from url
+    let {uid,pid}=req.params; //reads the urls and returns in obj from //{uid:"",pid:""}
+    //console.log(uid)
+    //console.log(pid)
+    //check user (using findOne)
+    let user=await userModel.findById(uid)
+    if(!user){
+        return res.status(401).json({message:"user not found"})
+    }
+    //check product
+    let product=await ProductModel.findById(pid)
+    if(!product){
+        return res.status(401).json({message:"product not found"})
+    }
+    //perform update
+    //since cart of type array we use push to insert
+    let modifiedUser=await userModel.findByIdAndUpdate(
+        uid,
+        {$push:{cart:{product:pid}}},
+        {new:true}
+    )
+    //res
+    res.status(200).json({message:"product added into cart",payload:modifiedUser})
 })
-//cretae User
-userApp.post('/users',async(req,res)=>{
-    //get newuser from req
-    let newUser=req.body;
-    //check newUser before processing
-    //console.log(newUser)
+*/
 
-    //create new user doucument
-    let newUserDoc=new UserModel(newUser)
-    //console.log(newUserDoc)
+//read user by id
+userRouter.get('/users/:uid',async(req,res)=>{
+     let {uid}=req.params;
+     //find user
+     let userObj=await userModel.findById(uid).populate("cart.product")
+     //response
+     res.status(200).json({message:"user",payload:userObj})
+    })
+    //increase the quantity of the product if present
+userRouter.put('/user-cart/user-id/:uid/product-id/:pid',async(req,res)=>{
+    let {uid,pid}=req.params
+    //check the user  is avail
+    let userObj=await userModel.findById(uid)
+    if(!userObj)
+    {
+        return res.status(401).json({message:"user not found"})
+    }
+    //check the product is available
+    let prodObj=await ProductModel.findById(pid)
+    if(!prodObj)
+    {
+        return res.status(401).json({message:"product not found"})
+    }
 
-    //save in db
-    await newUserDoc.save()
-    res.status(201).json({message:"User Created"})
+    let cartItem=user.cart.find(
+        a=>a.prodObj.toString()==pid)
+
+    if(cartItem){
+        cartItem.quantity+=1
+    }
+    else{
+        user.cart.push({
+            product:pid,
+            quantity:1
+        })
+    }
+    
+    res.status(200).json({message:"product updated sucessfully",payload:userObj})
 })
 
-//update User
-userApp.put('/users/:id',async(req,res)=>{
-    //get obj id from prams
-    let objId=req.params.id;
-    //get modified use rfrom req
-    let modifiedUser=req.body 
-    //make update
-    let latestUser = await UserModel.findByIdAndUpdate(objId,{$set:{...modifiedUser}},{new:true,runValidators:true})
-    //send res
-    res.status(200).json({message:"user modified",payload:latestUser})
-})
-//Delete User
-userApp.delete('/users/:id',async(req,res)=>{
-   //get ObjectId from url params
-   let objId=req.params.id;
-   //delete user by Id
-   let deleteUser=await UserModel.findByIdAndDelete(objId)
-   res.status(200).json({message:"User deleted",payload:deleteUser})
+
+//read user by id
+userRouter.get('/compare/:pid',async(req,res)=>{
+    let productId=req.params.pid
+    //get product
+    let prot =await ProductModel.findById(productId) 
+    //compare ids
+    /*
+    if(productId==productId._id){
+        console.log("Equal")
+    }
+    else{
+        console.log("Not Equal")
+    }*/
+
+    if(productId._id.equals(productId)){
+     console.log("Equal")
+    }
+    else{
+        console.log("Not Equal")
+    }
 })

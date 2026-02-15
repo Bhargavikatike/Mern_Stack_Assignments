@@ -1,29 +1,31 @@
 import {Schema,model} from 'mongoose'
-
-//create user schema
+//create cart schema
+const cartSchema=new Schema({
+    product:{
+    type:Schema.Types.ObjectId, 
+    ref:'product', //name of the product
+    required:true
+    },
+    quantity:{
+        type:Number
+    }
+})
 const userSchema= new Schema({
-   username:{
-    type:String,
-    required: [true,"Usename is required"],
-    minLength:[4,"Min Length should be 4"],
-    maxLength:[6,"Max Length exceeded"]
+    name:{
+        type:String,
+        required: [true," Name is required"]
+   },
+   email:{
+        type:String,
+        required: [true,"email is required"],
+        unique:true 
    },
    password:{
     type:String,
-    required:[true,"Password is required"],
+        required: [true,"password is required"],
    },
-   age:{
-    type:Number,
-    required:[true,"Age is required"],
-    min:[18,"Age should be above 18"],
-    max:[25,"Age should be less than 25"]
-   }
-},{
-    strict:"throw", //throws the error if any new fields are created
-    timestamps:true
+cart:{
+    type:[cartSchema]
+}
 })
-
-
-
-//cretae user model to that schema
-export const UserModel=model("user",userSchema)
+export const userModel=model("user",userSchema)
